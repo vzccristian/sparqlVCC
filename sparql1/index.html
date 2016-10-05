@@ -17,6 +17,15 @@
 <body>
 <div id=divSparql>
 <h1> Ejemplo SPARQL</h1>
+
+<form id="buscarOpenData" name="buscarDatosOpenData" method="post">
+	<select id="lista" size="1">
+		<option value="http://opendata.caceres.es/sparql/">OpenData Caceres</option>
+		<option value="http://opendata.unex.es/sparql/">OpenData Universidad de Extremadura</option>
+	</select>
+	<!-- <input type="button" value="Seleccionar" onClick="getData()"> -->
+</form>
+
 <input type="button" value="Generar tabla SPARQL" onclick="getData()">
 </div>
  

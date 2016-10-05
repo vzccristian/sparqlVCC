@@ -1,6 +1,9 @@
    function getData(){
 
-        var endpoint = "http://opendata.caceres.es/sparql/"
+      	// Obtengo el punto sparql al que se quiere acceder.
+      	var listaEndPoint =  document.getElementById("lista");
+      	var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
+ 
         var queryGraph = "";
         var sparqlQuery =   "select ?nomFarma where {"+
                             "?x a schema:Pharmacy."+
