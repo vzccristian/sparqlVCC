@@ -4,8 +4,16 @@ function getRecursos(){
     var listaEndPoint =  document.getElementById("lista");
     var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
     var queryGraph = "";
-    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept} LIMIT 100";
-    
+    if (endpoint=="http://opendata.caceres.es/sparql/") {
+    	    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept"+
+     " FILTER regex(?Concept , \"ontomunicipio\")} LIMIT 100 ";
+    }
+    else {
+     	    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept"+
+     " FILTER regex(?Concept , \"ontouniversidad\")} LIMIT 100 ";   	
+    }
+
+   console.log(sparqlQuery);
     $.ajax({
      	data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
             url: endpoint,
