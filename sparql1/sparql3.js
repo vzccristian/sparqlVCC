@@ -1,5 +1,6 @@
 function getRecursos(){
 	console.log("Tomando recursos...");
+	document.getElementById("divRecursos").innerHTML="";
 	// Obtengo el punto sparql al que se quiere acceder.
     var listaEndPoint =  document.getElementById("lista");
     var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
@@ -29,21 +30,90 @@ function getRecursos(){
 		frag = document.createDocumentFragment(),
 		select = document.createElement("select");
 		var valor = datos[0].Concept.value;
-		select.options.add(new Option(valor, "AU", true, true));
+		var valorLimpio = valor.split("#");
+		select.options.add(new Option(valorLimpio[1], "AU", true, true));
 		for (var i = 1; i < datos.length; i++) {
 			valor = datos[i].Concept.value;
-			select.options.add(new Option(valor, "AU"));
+			valorLimpio = valor.split("#");
+			select.options.add(new Option(valorLimpio[1], "AU"));
 		}
+
 		frag.appendChild(select);
 		div.appendChild(frag);
+
+		espacio = document.createTextNode("      ");
+ 		divRecursos.appendChild(espacio);
+
+		createButton(divRecursos,null,"Seleccionar recurso");
 		}
 		});
 
 }
 
+function createButton(context, func, valor){
+    var button = document.createElement("input");
+    button.type = "button";
+    button.value = valor;
+    button.onclick = func;
+    context.appendChild(button);
+}
+
+function getDataConsulta() {
+	// Obtengo el punto sparql al que se quiere acceder.
+    var listaEndPoint =  document.getElementById("lista");
+    var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
+    var queryGraph = "";	
+
+    var queryGraph = "";
+    var sparqlQuery = document.getElementById("textAreaConsultaLimpia").value;
+    console.log (sparqlQuery);
+      		
+    $.ajax({
+        data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
+        url: endpoint,
+        cache: false,
+            statusCode: {
+                400: function(error){
+                    alert("ERROR");
+                }
+            },
+		  success : function(data) {
+			var datos = data.results.bindings;
+//			console.log(datos);
+
+			var divDatos = document.getElementById("divSparql");
+
+			//GENERACION DE TABLA
+			// Obtener la referencia del elemento body
+			var body = document.getElementsByTagName("body")[0];
+			
+			// Crea un elemento <table> y un elemento <tbody>
+			var tabla   = document.createElement("table");
+			var tblBody = document.createElement("tbody");
+			
+			
+			for ( var i in datos) {
+				// Crea las hileras de la tabla
+			    var hilera = document.createElement("tr");
+			    var celda = document.createElement("td");
+			    var valor = datos[i].Concept.value;
+			    var textoCelda = document.createTextNode(valor);
+			    celda.appendChild(textoCelda);
+			    hilera.appendChild(celda);
+			    tblBody.appendChild(hilera);   
+			}
+			   // posiciona el <tbody> debajo del elemento <table>
+			   tabla.appendChild(tblBody);
+			   // appends <table> into <body>
+			   body.appendChild(tabla);
+			   // modifica el atributo "border" de la tabla y lo fija a "2";
+			   tabla.setAttribute("border", "2");
+		}
+        });
+
+}
 
    function getData(){
-
       	// Obtengo el punto sparql al que se quiere acceder.
       	var listaEndPoint =  document.getElementById("lista");
       	var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
@@ -54,9 +124,7 @@ function getRecursos(){
                             "?x schema:name ?nomFarma."+
                             "} ORDER BY ASC (?nomFarma) LIMIT 50";
         
-//        var sparqlQuery = "select distinct ?Concept where {[] a ?Concept} LIMIT 100";
-
-        		
+      		
         $.ajax({
             data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
             url: endpoint,

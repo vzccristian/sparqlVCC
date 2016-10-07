@@ -30,8 +30,12 @@
 <div id="divRecursos"> </div> 
 
 
-<input type="button" value="Generar tabla SPARQL" onclick="getData()">
+<input type="button" value="Generar tabla SPARQL (Ejemplo)" onclick="getData()">
 
- 
+ <form id="consultaLimpia" name="consultaLimpia" method="post">
+  <textarea name="textAreaConsultaLimpia" id="textAreaConsultaLimpia" cols="45" rows="5"></textarea>
+  <input type="button" name="buttonConsultaLimpia" id="buttonConsultaLimpia" value="Consultar" onclick="getDataConsulta()" />
+  </form>
+
 </body>
 </html>
