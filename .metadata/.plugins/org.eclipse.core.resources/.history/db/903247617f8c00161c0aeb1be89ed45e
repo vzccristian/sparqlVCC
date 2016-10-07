@@ -102,18 +102,16 @@ function getDataConsulta() {
             },   
 		  success : function(data) {
 			var datos = data.results.bindings;
-			generarTabla(datos);
+//			generarTabla(datos);
 		}
         });
 
     }
    
    function generarTabla(datos) {
+	   	document.getElementById("divTabla").innerHTML="";
 		var divDatos = document.getElementById("divTabla");
-		while(divDatos.firstChild){
-			divDatos.removeChild(divDatos.firstChild);
-		}
-
+		
 		//GENERACION DE TABLA
 		// Obtener la referencia del elemento body
 		var body = document.getElementsByTagName("body")[0];

@@ -109,11 +109,9 @@ function getDataConsulta() {
     }
    
    function generarTabla(datos) {
+	   	document.getElementById("divTabla").innerHTML="";
 		var divDatos = document.getElementById("divTabla");
-		while(divDatos.firstChild){
-			divDatos.removeChild(divDatos.firstChild);
-		}
-
+		
 		//GENERACION DE TABLA
 		// Obtener la referencia del elemento body
 		var body = document.getElementsByTagName("body")[0];

@@ -86,7 +86,7 @@ function getDataConsulta() {
       	// Obtengo el punto sparql al que se quiere acceder.
       	var listaEndPoint =  document.getElementById("lista");
       	var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
-        var queryGraph = "";
+         var queryGraph = "";
         var sparqlQuery =   "select ?nomFarma where {"+
                             "?x a schema:Pharmacy."+
                             "?x schema:name ?nomFarma."+
@@ -109,11 +109,9 @@ function getDataConsulta() {
     }
    
    function generarTabla(datos) {
+	   	document.getElementById("divTabla").innerHTML="";
 		var divDatos = document.getElementById("divTabla");
-		while(divDatos.firstChild){
-			divDatos.removeChild(divDatos.firstChild);
-		}
-
+		
 		//GENERACION DE TABLA
 		// Obtener la referencia del elemento body
 		var body = document.getElementsByTagName("body")[0];

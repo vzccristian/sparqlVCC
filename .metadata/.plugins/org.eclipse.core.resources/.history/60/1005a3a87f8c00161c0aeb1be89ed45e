@@ -111,7 +111,7 @@ function getDataConsulta() {
    function generarTabla(datos) {
 		var divDatos = document.getElementById("divTabla");
 		while(divDatos.firstChild){
-			divDatos.removeChild(divDatos.firstChild);
+		    div.removeChild(div.firstChild);
 		}
 
 		//GENERACION DE TABLA

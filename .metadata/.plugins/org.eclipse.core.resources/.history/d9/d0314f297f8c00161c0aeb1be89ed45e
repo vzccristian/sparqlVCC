@@ -15,7 +15,7 @@
 
 </head>
 <body>
-
+<div id=divSparql>
 <h1> Ejemplo SPARQL</h1>
 
 <form id="buscarOpenData" name="buscarDatosOpenData" method="post">
@@ -25,7 +25,6 @@
 	</select>
 	<input type="button" value="Seleccionar" onclick="getRecursos()">
 </form>
-<div id=divTabla>
 </div>
 
 <div id="divRecursos"> </div> 
