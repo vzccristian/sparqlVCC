@@ -157,6 +157,10 @@ function getDataConsulta() {
 			// Crea las hileras de la tabla
 		    var hilera = document.createElement("tr");
 		    var celda = document.createElement("td");
+		 //  var nom=datos[i];
+		 //TODO PROBLEMAS PARA COGER LAS PROPIEDADES.
+
+		    console.log(datos[i]);
 		    var valor = datos[i].nomFarma.value;
 		    var textoCelda = document.createTextNode(valor);
 		    celda.appendChild(textoCelda);
@@ -169,6 +173,7 @@ function getDataConsulta() {
 		   body.appendChild(tabla);
 		   // modifica el atributo "border" de la tabla y lo fija a "2";
 		   tabla.setAttribute("border", "2");
+		}
 	 }
 //window.alert("Hola");
 //window.onload = getData();
