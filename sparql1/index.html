@@ -17,7 +17,7 @@
 <body>
 
 <h1> Ejemplo SPARQL</h1>
-<<<<<<< HEAD
+
 
 <form id="buscarOpenData" name="buscarDatosOpenData" method="post">
 	<select id="lista" size="1">
@@ -26,22 +26,18 @@
 	</select>
 	<input type="button" value="Seleccionar" onclick="getRecursos()">
 </form>
-<div id=divTabla>
-=======
-<input type="button" value="Generar tabla SPARQL" onclick="getData()">
-<br><br>
->>>>>>> origin/master
-</div>
 
 <div id="divRecursos"> </div> 
+<div id="divPropiedades"></div>
 
-
-<input type="button" value="Generar tabla SPARQL (Ejemplo)" onclick="getData()">
-
+<br>
  <form id="consultaLimpia" name="consultaLimpia" method="post">
   <textarea name="textAreaConsultaLimpia" id="textAreaConsultaLimpia" cols="45" rows="5"></textarea>
   <input type="button" name="buttonConsultaLimpia" id="buttonConsultaLimpia" value="Consultar" onclick="getDataConsulta()" />
   </form>
+
+<input type="button" value="Generar tabla SPARQL (Ejemplo)" onclick="getData()">
+<div id=divTabla><br></div>
 
 </body>
 </html>

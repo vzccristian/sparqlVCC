@@ -7,11 +7,11 @@ function getRecursos(){
     var queryGraph = "";
     if (endpoint=="http://opendata.caceres.es/sparql/") {
     	    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept"+
-     " FILTER regex(?Concept , \"ontomunicipio\")} LIMIT 100 ";
+     " FILTER regex(?Concept , \"ontomunicipio\")} ";
     }
     else {
      	    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept"+
-     " FILTER regex(?Concept , \"ontouniversidad\")} LIMIT 100 ";   	
+     " FILTER regex(?Concept , \"ontouniversidad\")}";   	
     }
 
    console.log(sparqlQuery);
@@ -40,17 +40,49 @@ function getRecursos(){
 		div.appendChild(frag);
 		espacio = document.createTextNode("      ");
  		divRecursos.appendChild(espacio);
-		createButton(divRecursos,null,"Seleccionar recurso");
+		createButton(divRecursos,null,"Seleccionar recurso","selectResources");
+		document.getElementById("selectResources").onclick = function() {getPropertys()};
 		}
 	});
 
 }
+function getPropertys() {
+	console.log("Tomando propiedades...");
+	document.getElementById("divPropiedades").innerHTML="";
+	// Obtengo el punto sparql al que se quiere acceder.
+    var listaEndPoint =  document.getElementById("lista");
+    var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
+    var queryGraph = "";
+    var sparqlQuery =   "select distinct ?property where {"+
+         "?instance a om:Museo . "+
+         "?instance ?property ?obj . }";
+    console.log(sparqlQuery);
+	$.ajax({
+		data : {
+			"default-graph-uri" : queryGraph,
+			query : sparqlQuery,
+			format : 'json'
+		},
+		url : endpoint,
+		cache : false,
+		statusCode : {
+			400 : function(error) {
+				alert("ERROR");
+			}
+		},
+		success : function(data) {
+			var datos = data.results.bindings;
+			generarTabla(datos);
+		}
+	});
 
-function createButton(context, func, valor){
+}
+function createButton(context, func, valor, id){
     var button = document.createElement("input");
     button.type = "button";
     button.value = valor;
     button.onclick = func;
+    button.id=id;
     context.appendChild(button);
 }
 
@@ -109,17 +141,15 @@ function getDataConsulta() {
     }
    
    function generarTabla(datos) {
-		var divDatos = document.getElementById("divTabla");
-		while(divDatos.firstChild){
-			divDatos.removeChild(divDatos.firstChild);
-		}
 
 		//GENERACION DE TABLA
+		if (document.getElementById("tablaSPARQL")==null) {
 		// Obtener la referencia del elemento body
-		var body = document.getElementsByTagName("body")[0];
+		var body = document.getElementById("divTabla");
 		
 		// Crea un elemento <table> y un elemento <tbody>
 		var tabla   = document.createElement("table");
+		tabla.id=("tablaSPARQL");
 		var tblBody = document.createElement("tbody");
 		
 		
