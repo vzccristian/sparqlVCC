@@ -27,11 +27,13 @@ function getRecursos(){
 		var div = document.querySelector("#divRecursos"),
 		frag = document.createDocumentFragment(),
 		select = document.createElement("select");
-		var valor = datos[0].Concept.value;
+		console.log(datos);
+		var elemento="Concept";
+		var valor = datos[0][elemento].value;
 		var valorLimpio = valor.split("#");
 		select.options.add(new Option(valorLimpio[1], "AU", true, true));
 		for (var i = 1; i < datos.length; i++) {
-			valor = datos[i].Concept.value;
+			valor = datos[i][elemento].value;
 			valorLimpio = valor.split("#");
 			select.options.add(new Option(valorLimpio[1], "AU"));
 		}
@@ -71,6 +73,7 @@ function getPropertys() {
 			}
 		},
 		success : function(data) {
+			console.log(data);
 			var datos = data.results.bindings;
 			generarTabla(datos);
 		}
@@ -133,7 +136,8 @@ function getDataConsulta() {
                 }
             },   
 		  success : function(data) {
-			var datos = data.results.bindings;
+		  	console.log(data);
+		  				var datos = data.results.bindings;
 			generarTabla(datos);
 		}
         });
@@ -161,7 +165,8 @@ function getDataConsulta() {
 		 //TODO PROBLEMAS PARA COGER LAS PROPIEDADES.
 
 		    console.log(datos[i]);
-		    var valor = datos[i].nomFarma.value;
+		    
+		    var valor = datos[i].value;
 		    var textoCelda = document.createTextNode(valor);
 		    celda.appendChild(textoCelda);
 		    hilera.appendChild(celda);
