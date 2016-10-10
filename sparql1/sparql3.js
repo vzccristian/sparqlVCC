@@ -24,16 +24,23 @@ function getRecursos(){
         success : function(data) {
         //Introducir desplegable con todas las posibles opciones.
 		var datos = data.results.bindings;
-		var div = document.querySelector("#divRecursos"),
+		var columName[];
+		columName[0]="Concept";
+		crearDesplegable(datos,"#divRecursos",columName)
+		}
+	});
+
+}
+
+function crearDesplegable(datos,divInsertar,columName) {
+		var div = document.querySelector(divInsertar),
 		frag = document.createDocumentFragment(),
 		select = document.createElement("select");
-		console.log(datos);
-		var elemento="Concept";
-		var valor = datos[0][elemento].value;
+		var valor = datos[0][columName[0]].value;
 		var valorLimpio = valor.split("#");
 		select.options.add(new Option(valorLimpio[1], "AU", true, true));
 		for (var i = 1; i < datos.length; i++) {
-			valor = datos[i][elemento].value;
+			valor = datos[i][columName[0]].value;
 			valorLimpio = valor.split("#");
 			select.options.add(new Option(valorLimpio[1], "AU"));
 		}
@@ -44,9 +51,6 @@ function getRecursos(){
  		divRecursos.appendChild(espacio);
 		createButton(divRecursos,null,"Seleccionar recurso","selectResources");
 		document.getElementById("selectResources").onclick = function() {getPropertys()};
-		}
-	});
-
 }
 function getPropertys() {
 	console.log("Tomando propiedades...");
