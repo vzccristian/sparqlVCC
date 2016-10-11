@@ -52,8 +52,17 @@ function crearDesplegable(datos,divInsertar,columName) {
 function getPropertiesOfResources() {
 	console.log("Tomando propiedades...");
 	document.getElementById("divPropiedades").innerHTML="";
+	var resource=document.getElementById("selectResources");
+
+	//TODO
+
+	if(resource.selectedIndex<0)
+    		alert('No hay opción seleccionada');
+		else
+    		alert('La opción seleccionada es: '+resource.options[resource.selectedIndex].value);
+    var valorSeleccionado=resource.options[resource.selectedIndex].value;
     var sparqlQuery =   "select distinct ?property where {"+
-         "?instance a om:Museo . "+
+         "?instance a om:"+valorSeleccionado+" . "+
          "?instance ?property ?obj . }";
     console.log(sparqlQuery);
 	$.ajax({
