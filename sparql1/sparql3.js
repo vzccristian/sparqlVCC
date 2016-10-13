@@ -35,36 +35,34 @@ function crearDesplegable(datos,divInsertar,columName) {
 		var div = document.querySelector(divInsertar),
 		frag = document.createDocumentFragment(),
 		select = document.createElement("select");
+		select.id="desplegableRecursos";
 		var valor = "";
 		for (var i = 0; i < datos.length; i++) {
 			valor = datos[i][columName].value;
 			valorLimpio = valor.split("#");
-			select.options.add(new Option(valorLimpio[1], "AU"));
+			select.options.add(new Option(valorLimpio[1], valorLimpio[1]));
 		}
 		frag.appendChild(select);
 		div.appendChild(frag);
 		espacio = document.createTextNode("      ");
  		divRecursos.appendChild(espacio);
 		createButton(divRecursos,null,"Seleccionar recurso","selectResources");
-		document.getElementById("selectResources").onclick = function() {getPropertiesOfResources()};
+		document.getElementById("buttonselectResources").onclick = function() {getPropertiesOfResources()};
 }
 
 function getPropertiesOfResources() {
 	console.log("Tomando propiedades...");
 	document.getElementById("divPropiedades").innerHTML="";
-	var resource=document.getElementById("selectResources");
-
-	//TODO
+	resource=document.getElementById("desplegableRecursos");
 
 	if(resource.selectedIndex<0)
-    		alert('No hay opción seleccionada');
-		else
-    		alert('La opción seleccionada es: '+resource.options[resource.selectedIndex].value);
-    var valorSeleccionado=resource.options[resource.selectedIndex].value;
-    var sparqlQuery =   "select distinct ?property where {"+
+    		alert('Error');
+	else {
+   	 	var valorSeleccionado=resource.options[resource.selectedIndex].value;
+   		var sparqlQuery =   "select distinct ?property where {"+
          "?instance a om:"+valorSeleccionado+" . "+
          "?instance ?property ?obj . }";
-    console.log(sparqlQuery);
+
 	$.ajax({
      	data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
         url: endpointGeneral,
@@ -76,6 +74,8 @@ function getPropertiesOfResources() {
 			generarForm(datos,"property","divPropiedades");
 		}
 	});
+	}
+
 
 }
 
@@ -103,12 +103,25 @@ function generarForm(datos,columName,div) {
 	}	
 }
 
+function construirConsulta() {
+
+}
+
+function mostrarConsulta() {
+
+
+}
+
+function enviarConsulta() {
+	
+}
+
 function createButton(context, func, valor, id){
     var button = document.createElement("input");
     button.type = "button";
     button.value = valor;
     button.onclick = func;
-    button.id=id;
+    button.id="button"+id; ;
     context.appendChild(button);
 }
 
