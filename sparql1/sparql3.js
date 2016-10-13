@@ -51,7 +51,7 @@ function crearDesplegable(datos,divInsertar,columName) {
 }
 
 function getPropertiesOfResources() {
-	console.log("Tomando propiedades...");
+	console.log("getPropertiesOfResources()");
 	document.getElementById("divPropiedades").innerHTML="";
 	resource=document.getElementById("desplegableRecursos");
 
@@ -62,7 +62,7 @@ function getPropertiesOfResources() {
    		var sparqlQuery =   "select distinct ?property where {"+
          "?instance a om:"+valorSeleccionado+" . "+
          "?instance ?property ?obj . }";
-
+        console.log(sparqlQuery);
 	$.ajax({
      	data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
         url: endpointGeneral,
@@ -80,37 +80,47 @@ function getPropertiesOfResources() {
 }
 
 function generarForm(datos,columName,div) {
+	console.log("generarForm()");
+	var container=" ";
 	for ( var i in datos) {
-		//Checkbox
 		var valor = datos[i][columName].value;
-		if (valor.search("#")!=-1) { 
-		var valorLimpio = valor.split("#");
-		var checkbox = document.createElement('input');
-		checkbox.type = "checkbox";
-		checkbox.name = valorLimpio[1];
-		checkbox.value = valorLimpio[1];
-		checkbox.id = valorLimpio[1];
-		//Etiqueta
-		var label = document.createElement('label');
-		label.htmlFor = "id";
-		label.appendChild(document.createTextNode(valorLimpio[1]));
-		var pElement = document.createElement("p");
-		pElement.appendChild(checkbox);
-		pElement.appendChild(label);
-		var container=document.getElementById(div);
-		container.appendChild(pElement);
+		if ( valor.search("#")!=-1) { 
+			generarForm2(valor,"#",1);
+		} else {
+			var valorLimpio = valor.split("/");
+			generarForm2(valor,"/",valorLimpio.length-1);
 		}
 	}	
+	createButton(container,construirConsulta,"Construir consulta","buttonConstruirConsulta");
 }
+
+function generarForm2(valor,separador,posicion) {
+	var valorLimpio = valor.split(separador);
+	var checkbox = document.createElement('input');
+	checkbox.type = "checkbox";
+	checkbox.name = valorLimpio[posicion];
+	checkbox.value = valorLimpio[posicion];
+	checkbox.id = valorLimpio[posicion];
+	//Etiqueta
+	var label = document.createElement('label');
+	label.htmlFor = "id";
+	var pElement = document.createElement("p");
+	label.appendChild(document.createTextNode(valorLimpio[posicion]));
+	var pElement = document.createElement("p");
+	pElement.appendChild(checkbox);
+	pElement.appendChild(label);
+	container=document.getElementById(div);
+	container.appendChild(pElement);
+}
+
+
 
 function construirConsulta() {
+	console.log("Construyendo consulta");
+	document.getElementById("")
 
 }
 
-function mostrarConsulta() {
-
-
-}
 
 function enviarConsulta() {
 	
