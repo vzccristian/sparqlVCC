@@ -176,12 +176,30 @@ function construirConsulta() {
      		consulta+="<"+ontURL+"> ?var"+checkedBoxes[j].value+" . \n";
 	}
 	consulta+=" }";
+
+	var textArea=document.getElementById("textAreaConsultaLimpia");
+	textArea.value=consulta;
+	createButton(divTextArea,enviarConsulta(consulta,checkedBoxes),"Consultar","buttonTextArea");
 }
 
 
-function enviarConsulta() {
-	
+function enviarConsulta(consulta,encabezados) {
+	console.log("Enviando consulta...");
+	    $.ajax({
+     	data:{"default-graph-uri":queryGraph, query:consulta, format:'json'},
+        url: endpointGeneral,
+        cache: false,
+        statusCode: {400: function(error){alert("ERROR");}  },
+
+        success : function(data) {
+			var respuestaConsulta = data.results.bindings; 
+			generarTabla(respuestaConsulta,encabezados);
+		}
+	});
 }
+
+
+
 
 function createButton(context, func, valor, id){
     var button = document.createElement("input");
@@ -248,7 +266,10 @@ function getDataConsulta() {
 
     }
    
-   function generarTabla(datos,columName) {
+   function generarTabla(datos,encabezados) {
+   	console.log("Generando tabla...")
+   	datosTabla=datos;
+   	encabezadosTabla=encabezados;
 		//GENERACION DE TABLA A MENOS QUE YA HAYA SIDO CREADA. 
 		if (document.getElementById("tablaSPARQL")==null) {
 		// Obtener la referencia del elemento body
@@ -257,17 +278,21 @@ function getDataConsulta() {
 		var tabla   = document.createElement("table");
 		tabla.id=("tablaSPARQL");
 		var tblBody = document.createElement("tbody");
-		for ( var i in datos) {
+		for (var j in encabezados) {
 			// Crea las hileras de la tabla
-		    var hilera = document.createElement("tr");
-		    var celda = document.createElement("td");
-		    console.log(datos[i]);
-		    console.log(columName);
-		    var valor = datos[i][columName].value;
-		    var textoCelda = document.createTextNode(valor);
-		    celda.appendChild(textoCelda);
-		    hilera.appendChild(celda);
-		    tblBody.appendChild(hilera);   
+			var hilera = document.createElement("tr");
+			console.log(encabezados[j]);
+			for ( var i in datos[i]) {
+			    var celda = document.createElement("td");
+			    console.log(datos[i]);
+			    var atrib="var"+encabezados[j].value;
+			    console.log(atrib);
+			    var valor = datos[i][atrib].value;
+			    var textoCelda = document.createTextNode(valor);
+			    celda.appendChild(textoCelda);
+			    hilera.appendChild(celda);
+			    tblBody.appendChild(hilera);   
+			}
 		}
 		   // posiciona el <tbody> debajo del elemento <table>
 		   tabla.appendChild(tblBody);
