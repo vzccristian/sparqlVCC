@@ -53,6 +53,8 @@ function crearDesplegableRecursos(datos,divInsertar,columName) {
 function getPropertiesOfResources() {
 	console.log("getPropertiesOfResources()");
 	document.getElementById("divPropiedades").innerHTML="";
+	document.getElementById("divTabla").innerHTML="";
+	document.getElementById("textAreaConsultaLimpia").value="";
 	var resource=document.getElementById("desplegableRecursos");
 
 	if(resource.selectedIndex<0)
@@ -257,18 +259,19 @@ function getDataConsulta() {
 
 		var hilera = document.createElement("tr");
 		 for  (var j in encabezados) {
-				var celda = document.createElement("td");
-				var atrib = "var"+encabezados[j].value;
+				var celda = document.createElement("th");
+				var atrib = encabezados[j].value;
 				var textoCelda = document.createTextNode(atrib);
 				celda.appendChild(textoCelda);
 				hilera.appendChild(celda);
 				tblBody.appendChild(hilera);  
 		}
+
+
 		for ( var i in datos) {
 			var hilera = document.createElement("tr");
 			for  (var j in encabezados) {
 			    var celda = document.createElement("td");
-			    console.log(datos[i]);
 			    var atrib="var"+encabezados[j].value;
 			    var valor = datos[i][atrib].value;
 			    console.log(valor);
