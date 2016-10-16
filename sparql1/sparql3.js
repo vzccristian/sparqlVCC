@@ -95,7 +95,7 @@ function generarForm(datos,columName,div) {
 		//Creo array con ontologia y atributo.
 		datosOntologia.push({ ontologia: valor, atributo: valorLimpio[valorLimpio.length-1] });
 	}	
-	createButton(container,construirConsulta,"Construir consulta","buttonConstruirConsulta");
+	createButton(container,construirConsulta,"Consultar en punto de consulta","buttonConstruirConsulta");
 }
 
 function generarForm2(valor,separador,posicion,div) {
@@ -179,7 +179,7 @@ function construirConsulta() {
 
 	var textArea=document.getElementById("textAreaConsultaLimpia");
 	textArea.value=consulta;
-	createButton(divTextArea,enviarConsulta(consulta,checkedBoxes),"Consultar","buttonTextArea");
+	enviarConsulta(consulta,checkedBoxes);
 }
 
 
@@ -238,69 +238,52 @@ function getDataConsulta() {
 
 }
 
-   function getData(){
-      	// Obtengo el punto sparql al que se quiere acceder.
-      	var listaEndPoint =  document.getElementById("lista");
-      	var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
-        var queryGraph = "";
-        var sparqlQuery =   "select ?nomFarma where {"+
-                            "?x a schema:Pharmacy."+
-                            "?x schema:name ?nomFarma."+
-                            "} ORDER BY ASC (?nomFarma) LIMIT 50";
-        $.ajax({
-            data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
-            url: endpoint,
-            cache: false,
-            statusCode: {
-                400: function(error){
-                    alert("ERROR");
-                }
-            },   
-		  success : function(data) {
-		  	console.log(data);
-		  	var datos = data.results.bindings;
-		  	var columName="nomFarma";
-			generarTabla(datos,columName);
-		}
-        });
-
-    }
-   
    function generarTabla(datos,encabezados) {
-   	console.log("Generando tabla...")
-   	datosTabla=datos;
-   	encabezadosTabla=encabezados;
-		//GENERACION DE TABLA A MENOS QUE YA HAYA SIDO CREADA. 
-		if (document.getElementById("tablaSPARQL")==null) {
-		// Obtener la referencia del elemento body
+		console.log("Generando tabla...")
+		datosTabla=datos;
+		encabezadosTabla=encabezados;
+
+		var borrar= document.getElementById("tablaSPARQL");
+		if (borrar!=null)
+			document.getElementById("divTabla").innerHTML="";
+
 		var body = document.getElementById("divTabla");
-		// Crea un elemento <table> y un elemento <tbody>
 		var tabla   = document.createElement("table");
 		tabla.id=("tablaSPARQL");
 		var tblBody = document.createElement("tbody");
-		for (var j in encabezados) {
-			// Crea las hileras de la tabla
+		 
+
+		var hilera = document.createElement("tr");
+		 for  (var j in encabezados) {
+				var celda = document.createElement("td");
+				var atrib = "var"+encabezados[j].value;
+				var textoCelda = document.createTextNode(atrib);
+				celda.appendChild(textoCelda);
+				hilera.appendChild(celda);
+				tblBody.appendChild(hilera);  
+		}
+		for ( var i in datos) {
 			var hilera = document.createElement("tr");
-			console.log(encabezados[j]);
-			for ( var i in datos[i]) {
+			for  (var j in encabezados) {
 			    var celda = document.createElement("td");
 			    console.log(datos[i]);
 			    var atrib="var"+encabezados[j].value;
-			    console.log(atrib);
 			    var valor = datos[i][atrib].value;
+			    console.log(valor);
 			    var textoCelda = document.createTextNode(valor);
 			    celda.appendChild(textoCelda);
 			    hilera.appendChild(celda);
-			    tblBody.appendChild(hilera);   
+			    tblBody.appendChild(hilera);  
+
 			}
 		}
-		   // posiciona el <tbody> debajo del elemento <table>
-		   tabla.appendChild(tblBody);
-		   // appends <table> into <body>
-		   body.appendChild(tabla);
-		   // modifica el atributo "border" de la tabla y lo fija a "2";
-		   tabla.setAttribute("border", "2");
-		}
-	 }
+	   // posiciona el <tbody> debajo del elemento <table>
+	   tabla.appendChild(tblBody);
+	   // appends <table> into <body>
+	   body.appendChild(tabla);
+	   // modifica el atributo "border" de la tabla y lo fija a "2";
+	   tabla.setAttribute("border", "2");
+	
+ }
 //window.alert("Hola");
 //window.onload = getData();
