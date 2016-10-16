@@ -23,15 +23,15 @@ function getRecursos(){
 
         success : function(data) {
         //Introducir desplegable con todas las posibles opciones.
-		var datos = data.results.bindings;
+		datosRecursos = data.results.bindings; //TODOS LOS RECURSOS 
 		var columName="Concept";
-		crearDesplegable(datos,"#divRecursos",columName)
+		crearDesplegableRecursos(datosRecursos,"#divRecursos",columName)
 		}
 	});
 
 }
 
-function crearDesplegable(datos,divInsertar,columName) {
+function crearDesplegableRecursos(datos,divInsertar,columName) {
 		var div = document.querySelector(divInsertar),
 		frag = document.createDocumentFragment(),
 		select = document.createElement("select");
@@ -53,7 +53,7 @@ function crearDesplegable(datos,divInsertar,columName) {
 function getPropertiesOfResources() {
 	console.log("getPropertiesOfResources()");
 	document.getElementById("divPropiedades").innerHTML="";
-	resource=document.getElementById("desplegableRecursos");
+	var resource=document.getElementById("desplegableRecursos");
 
 	if(resource.selectedIndex<0)
     		alert('Error');
@@ -62,7 +62,7 @@ function getPropertiesOfResources() {
    		var sparqlQuery =   "select distinct ?property where {"+
          "?instance a om:"+valorSeleccionado+" . "+
          "?instance ?property ?obj . }";
-        console.log(sparqlQuery);
+        console.log("Consulta para atributos :" + sparqlQuery);
 	$.ajax({
      	data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
         url: endpointGeneral,
@@ -70,8 +70,8 @@ function getPropertiesOfResources() {
         statusCode: {400: function(error){alert("ERROR");}  },
 		success : function(data) {
 			console.log(data);
-			var datos = data.results.bindings;
-			generarForm(datos,"property","divPropiedades");
+			datosAtributos = data.results.bindings;
+			generarForm(datosAtributos,"property","divPropiedades");
 		}
 	});
 	}
@@ -81,24 +81,28 @@ function getPropertiesOfResources() {
 
 function generarForm(datos,columName,div) {
 	console.log("generarForm()");
-	var container=" ";
+	datosOntologia=[];
+	var valorLimpio=null;
 	for ( var i in datos) {
-		var valor = datos[i][columName].value;
+		var valor = datos[i][columName].value; //Contiene todo el string.
 		if ( valor.search("#")!=-1) { 
-			generarForm2(valor,"#",1);
+			valorLimpio = valor.split("#");
+			generarForm2(valor,"#",valorLimpio.length-1,div);
 		} else {
-			var valorLimpio = valor.split("/");
-			generarForm2(valor,"/",valorLimpio.length-1);
+			valorLimpio = valor.split("/");
+			generarForm2(valor,"/",valorLimpio.length-1,div);
 		}
+		//Creo array con ontologia y atributo.
+		datosOntologia.push({ ontologia: valor, atributo: valorLimpio[valorLimpio.length-1] });
 	}	
 	createButton(container,construirConsulta,"Construir consulta","buttonConstruirConsulta");
 }
 
-function generarForm2(valor,separador,posicion) {
+function generarForm2(valor,separador,posicion,div) {
 	var valorLimpio = valor.split(separador);
 	var checkbox = document.createElement('input');
 	checkbox.type = "checkbox";
-	checkbox.name = valorLimpio[posicion];
+	checkbox.name = "checkboxForm";
 	checkbox.value = valorLimpio[posicion];
 	checkbox.id = valorLimpio[posicion];
 	//Etiqueta
@@ -114,11 +118,64 @@ function generarForm2(valor,separador,posicion) {
 }
 
 
+// Pass the checkbox name to the function
+function getCheckedBoxes(chkboxName) {
+  var checkboxes = document.getElementsByName(chkboxName);
+  var checkboxesChecked = [];
+  // loop over them all
+  for (var i=0; i<checkboxes.length; i++) {
+     // And stick the checked ones onto an array...
+     if (checkboxes[i].checked) {
+        checkboxesChecked.push(checkboxes[i]);
+     }
+  }
+  // Return the array if it is non-empty, or null
+  return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+}
+
+
 
 function construirConsulta() {
 	console.log("Construyendo consulta");
-	document.getElementById("")
+	container=document.getElementById("divPropiedades");
+	checkedBoxes = getCheckedBoxes("checkboxForm");
+	var checkedValue = null; 
+	consulta="PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n "+
+				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n "+
+				"PREFIX owl: <http://www.w3.org/2002/07/owl#> \n "+
+				"PREFIX dc: <http://purl.org/dc/elements/1.1/> \n " +
+				"PREFIX om: <http://opendata.caceres.edds/def/ontomunicipio> \n "+
+				"Select "
+				;
 
+	for(var i=0; checkedBoxes[i]; ++i){
+		consulta+="?var"+checkedBoxes[i].value+" ";
+      }
+		consulta+="where { \n";
+	//	consulta+"?x a schema:Pharmacy."
+
+	var resource=document.getElementById("desplegableRecursos");
+	var valorSeleccionado=datosRecursos[resource.selectedIndex]["Concept"].value;
+
+	consulta+="?x a <"+valorSeleccionado+"> . \n";
+
+
+	//ATRIBUTOS
+	for(var j=0; checkedBoxes[j]; ++j){
+		consulta+="?x ";
+     // datosOntologia
+     encontrado=false;
+     var ontURL=null;
+      for (var i = 0; i < datosOntologia.length && !encontrado; i++) {
+      	if (datosOntologia[i].atributo==checkedBoxes[j].value) {
+      		ontURL=datosOntologia[i].ontologia;
+      		encontrado=true;
+     		}
+     	 }
+     	if (encontrado)
+     		consulta+="<"+ontURL+"> ?var"+checkedBoxes[j].value+" . \n";
+	}
+	consulta+=" }";
 }
 
 
@@ -131,7 +188,7 @@ function createButton(context, func, valor, id){
     button.type = "button";
     button.value = valor;
     button.onclick = func;
-    button.id="button"+id; ;
+    button.id="button"+id; 
     context.appendChild(button);
 }
 
