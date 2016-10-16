@@ -58,9 +58,11 @@ function getPropertiesOfResources() {
 	if(resource.selectedIndex<0)
     		alert('Error');
 	else {
-   	 	var valorSeleccionado=resource.options[resource.selectedIndex].value;
+   	 	var valorSeleccionado=datosRecursos[resource.selectedIndex].Concept.value;
+   	 //	var valorSeleccionado=resource.options[resource.selectedIndex].value;
+   	 	console.log(datosRecursos[resource.selectedIndex].Concept.value);
    		var sparqlQuery =   "select distinct ?property where {"+
-         "?instance a om:"+valorSeleccionado+" . "+
+         "?instance a <"+valorSeleccionado+"> . "+
          "?instance ?property ?obj . }";
         console.log("Consulta para atributos :" + sparqlQuery);
 	$.ajax({
