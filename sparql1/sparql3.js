@@ -1,10 +1,10 @@
 function getRecursos(){
 	console.log("Tomando recursos...");
 	document.getElementById("divRecursos").innerHTML="";
-	// Obtengo el punto sparql al que se quiere acceder.
+	//OBTENCION PUNTO DE CONSULTA
     var listaEndPoint =  document.getElementById("lista"); //Seleccionar lista para consultas open data
-    endpointGeneral = listaEndPoint.options[listaEndPoint.selectedIndex].value;
-    queryGraph = "";
+    endpointGeneral = listaEndPoint.options[listaEndPoint.selectedIndex].value; //GLOBAL -> SELECCIONAR PUNTO DE CONSULTA SELECCIONADO EN DESPLEGABLE.
+    queryGraph = ""; // GLOBAL -> NUNCA CAMBIA
     if (endpointGeneral=="http://opendata.caceres.es/sparql/") {
     	    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept"+
      " FILTER regex(?Concept , \"ontomunicipio\")} ";
@@ -13,22 +13,30 @@ function getRecursos(){
      	    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept"+
      " FILTER regex(?Concept , \"ontouniversidad\")}";   	
     }
+   //CALLBACK PARA ESPERAR POR LA CONSULTA.
+	var callbackQuery = function (data) {
+		if (data!=null) { //Consulta CORRECTA
+			datosRecursos=data; //GLOBAL
+			var columName="Concept";
+			crearDesplegableRecursos(data,"#divRecursos",columName);
+		}
+	}
+	lanzarConsultaSPARQL(sparqlQuery,endpointGeneral,callbackQuery);
+}
 
-   console.log(sparqlQuery);
+function lanzarConsultaSPARQL(consultaSPARQL,puntoDeConsulta,callback) {
+	var queryGraph = "";
+	dataQuery = null;
     $.ajax({
-     	data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
-        url: endpointGeneral,
+     	data:{"default-graph-uri":queryGraph, query:consultaSPARQL, format:'json'},
+        url: puntoDeConsulta,
         cache: false,
-        statusCode: {400: function(error){alert("ERROR");}  },
-
+        statusCode: {400: function(error){ alert("Error al lanzar la consulta. "+consultaSPARQL+" \n");}  },
         success : function(data) {
-        //Introducir desplegable con todas las posibles opciones.
-		datosRecursos = data.results.bindings; //TODOS LOS RECURSOS 
-		var columName="Concept";
-		crearDesplegableRecursos(datosRecursos,"#divRecursos",columName)
+			dataQuery=data.results.bindings;
+			callback(dataQuery);
 		}
 	});
-
 }
 
 function crearDesplegableRecursos(datos,divInsertar,columName) {
@@ -54,33 +62,26 @@ function getPropertiesOfResources() {
 	console.log("getPropertiesOfResources()");
 	document.getElementById("divPropiedades").innerHTML="";
 	document.getElementById("divTabla").innerHTML="";
-	document.getElementById("textAreaConsultaLimpia").value="";
+	document.getElementById("textAreaConsulta").value="";
 	var resource=document.getElementById("desplegableRecursos");
 
 	if(resource.selectedIndex<0)
     		alert('Error');
 	else {
    	 	var valorSeleccionado=datosRecursos[resource.selectedIndex].Concept.value;
-   	 //	var valorSeleccionado=resource.options[resource.selectedIndex].value;
    	 	console.log(datosRecursos[resource.selectedIndex].Concept.value);
    		var sparqlQuery =   "select distinct ?property where {"+
          "?instance a <"+valorSeleccionado+"> . "+
          "?instance ?property ?obj . }";
         console.log("Consulta para atributos :" + sparqlQuery);
-	$.ajax({
-     	data:{"default-graph-uri":queryGraph, query:sparqlQuery, format:'json'},
-        url: endpointGeneral,
-        cache: false,
-        statusCode: {400: function(error){alert("ERROR");}  },
-		success : function(data) {
-			console.log(data);
-			datosAtributos = data.results.bindings;
-			generarForm(datosAtributos,"property","divPropiedades");
+
+    var callbackQueryProperties = function (data) {
+		if (data!=null) { //Consulta CORRECTA
+			generarForm(data,"property","divPropiedades");
 		}
-	});
 	}
-
-
+    lanzarConsultaSPARQL(sparqlQuery,endpointGeneral,callbackQueryProperties);    
+	}
 }
 
 function generarForm(datos,columName,div) {
@@ -156,14 +157,10 @@ function construirConsulta() {
 		consulta+="?var"+checkedBoxes[i].value+" ";
       }
 		consulta+="where { \n";
-	//	consulta+"?x a schema:Pharmacy."
 
 	var resource=document.getElementById("desplegableRecursos");
 	var valorSeleccionado=datosRecursos[resource.selectedIndex]["Concept"].value;
-
 	consulta+="?x a <"+valorSeleccionado+"> . \n";
-
-
 	//ATRIBUTOS
 	for(var j=0; checkedBoxes[j]; ++j){
 		consulta+="?x ";
@@ -181,29 +178,20 @@ function construirConsulta() {
 	}
 	consulta+=" }";
 
-	var textArea=document.getElementById("textAreaConsultaLimpia");
+	var textArea=document.getElementById("textAreaConsulta");
 	textArea.value=consulta;
 	enviarConsulta(consulta,checkedBoxes);
 }
 
-
 function enviarConsulta(consulta,encabezados) {
 	console.log("Enviando consulta...");
-	    $.ajax({
-     	data:{"default-graph-uri":queryGraph, query:consulta, format:'json'},
-        url: endpointGeneral,
-        cache: false,
-        statusCode: {400: function(error){alert("ERROR");}  },
-
-        success : function(data) {
-			var respuestaConsulta = data.results.bindings; 
-			generarTabla(respuestaConsulta,encabezados);
+	var callbackSendQuery = function (data) {
+		if (data!=null) { //Consulta CORRECTA
+			generarTabla(data,encabezados);
 		}
-	});
+	}
+    lanzarConsultaSPARQL(consulta,endpointGeneral,callbackSendQuery);  
 }
-
-
-
 
 function createButton(context, func, valor, id){
     var button = document.createElement("input");
@@ -214,80 +202,52 @@ function createButton(context, func, valor, id){
     context.appendChild(button);
 }
 
-function getDataConsulta() {
-	var listaEndPoint = document.getElementById("lista");
-	var endpoint = listaEndPoint.options[listaEndPoint.selectedIndex].value;
-	var queryGraph = "";
-	var sparqlQuery = document.getElementById("textAreaConsultaLimpia").value;
-	console.log(sparqlQuery);
 
-	$.ajax({
-		data : {
-			"default-graph-uri" : queryGraph,
-			query : sparqlQuery,
-			format : 'json'
-		},
-		url : endpoint,
-		cache : false,
-		statusCode : {
-			400 : function(error) {
-				alert("ERROR");
-			}
-		},
-		success : function(data) {
-			var datos = data.results.bindings;
-			generarTabla(datos);
-		}
-	});
+function generarTabla(datos,encabezados) {
+	console.log("Generando tabla...")
+	datosTabla=datos; //GLOBALES TABLA Y ENCABEZADOS.
+	encabezadosTabla=encabezados;
+	var borrar= document.getElementById("tablaSPARQL");
+	if (borrar!=null)
+		document.getElementById("divTabla").innerHTML="";
 
-}
+	var body = document.getElementById("divTabla");
+	var tabla   = document.createElement("table");
+	tabla.id=("tablaSPARQL");
+	var tblBody = document.createElement("tbody");
+	 
+	//CREACION DE CABECERAS DE LA TABLA
+	var hilera = document.createElement("tr");
+	 for  (var j in encabezados) {
+			var celda = document.createElement("th");
+			var atrib = encabezados[j].value;
+			var textoCelda = document.createTextNode(atrib);
+			celda.appendChild(textoCelda);
+			hilera.appendChild(celda);
+			tblBody.appendChild(hilera);  
+	}
 
-   function generarTabla(datos,encabezados) {
-		console.log("Generando tabla...")
-		datosTabla=datos;
-		encabezadosTabla=encabezados;
-
-		var borrar= document.getElementById("tablaSPARQL");
-		if (borrar!=null)
-			document.getElementById("divTabla").innerHTML="";
-
-		var body = document.getElementById("divTabla");
-		var tabla   = document.createElement("table");
-		tabla.id=("tablaSPARQL");
-		var tblBody = document.createElement("tbody");
-		 
-
+	//CREACION DE TABLA
+	for ( var i in datos) {
 		var hilera = document.createElement("tr");
-		 for  (var j in encabezados) {
-				var celda = document.createElement("th");
-				var atrib = encabezados[j].value;
-				var textoCelda = document.createTextNode(atrib);
-				celda.appendChild(textoCelda);
-				hilera.appendChild(celda);
-				tblBody.appendChild(hilera);  
+		for  (var j in encabezados) {
+		    var celda = document.createElement("td");
+		    var atrib="var"+encabezados[j].value;
+		    var valor = datos[i][atrib].value;
+		    console.log(valor);
+		    var textoCelda = document.createTextNode(valor);
+		    celda.appendChild(textoCelda);
+		    hilera.appendChild(celda);
+		    tblBody.appendChild(hilera);  
+
 		}
-
-
-		for ( var i in datos) {
-			var hilera = document.createElement("tr");
-			for  (var j in encabezados) {
-			    var celda = document.createElement("td");
-			    var atrib="var"+encabezados[j].value;
-			    var valor = datos[i][atrib].value;
-			    console.log(valor);
-			    var textoCelda = document.createTextNode(valor);
-			    celda.appendChild(textoCelda);
-			    hilera.appendChild(celda);
-			    tblBody.appendChild(hilera);  
-
-			}
-		}
-	   // posiciona el <tbody> debajo del elemento <table>
-	   tabla.appendChild(tblBody);
-	   // appends <table> into <body>
-	   body.appendChild(tabla);
-	   // modifica el atributo "border" de la tabla y lo fija a "2";
-	   tabla.setAttribute("border", "2");
+	}
+   // posiciona el <tbody> debajo del elemento <table>
+   tabla.appendChild(tblBody);
+   // appends <table> into <body>
+   body.appendChild(tabla);
+   // modifica el atributo "border" de la tabla y lo fija a "2";
+   tabla.setAttribute("border", "2");
 	
  }
 //window.alert("Hola");
