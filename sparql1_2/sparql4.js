@@ -5,14 +5,9 @@ function getRecursos(){
     var listaEndPoint =  document.getElementById("lista"); //Seleccionar lista para consultas open data
     endpointGeneral = listaEndPoint.options[listaEndPoint.selectedIndex].value; //GLOBAL -> SELECCIONAR PUNTO DE CONSULTA SELECCIONADO EN DESPLEGABLE.
     queryGraph = ""; // GLOBAL -> NUNCA CAMBIA
-    if (endpointGeneral=="http://opendata.caceres.es/sparql/") {
-    	    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept"+
-     " FILTER regex(?Concept , \"ontomunicipio\")} ";
-    }
-    else {
-     	    var sparqlQuery =   "select distinct ?Concept where {[] a ?Concept"+
-     " FILTER regex(?Concept , \"ontouniversidad\")}";   	
-    }
+    var sparqlQuery="select distinct ?Concept where {[] a ?Concept"+
+     " FILTER regex(?Concept , \"http\")} "
+
    //CALLBACK PARA ESPERAR POR LA CONSULTA.
 	var callbackQuery = function (data) {
 		if (data!=null) { //Consulta CORRECTA
@@ -47,8 +42,8 @@ function crearDesplegableRecursos(datos,divInsertar,columName) {
 		var valor = "";
 		for (var i = 0; i < datos.length; i++) {
 			valor = datos[i][columName].value;
-			valorLimpio = valor.split("#");
-			select.options.add(new Option(valorLimpio[1], valorLimpio[1]));
+			//valorLimpio = valor.split("#");
+			select.options.add(new Option(valor, valor));
 		}
 		frag.appendChild(select);
 		div.appendChild(frag);
@@ -100,21 +95,7 @@ function generarForm(datos,columName,div) {
 		//Creo array con ontologia y atributo.
 		datosOntologia.push({ ontologia: valor, atributo: valorLimpio[valorLimpio.length-1] });
 	}	
-	//CAMPO WHERE.
-	var miP = document.createElement("p");
-	//Etiqueta
-	var labelWhere = document.createElement('label');
-	label.htmlFor = "id";
-	label.appendChild(document.createTextNode("Where: "));
-	var mi = document.createElement("input");
-	mi.setAttribute('type', 'text');
-	mi.setAttribute('value', '');
-	mi.setAttribute("id","whereInput");
-	miP.appendChild(label);
-	miP.appendChild(mi);
-	var container=document.getElementById(div);
-	container.appendChild(miP);
-
+	
 	createButton(container,construirConsulta,"Consultar en punto de consulta","buttonConstruirConsulta");
 }
 
