@@ -6,7 +6,7 @@ function getRecursos(){
     endpointGeneral = listaEndPoint.options[listaEndPoint.selectedIndex].value; //GLOBAL -> SELECCIONAR PUNTO DE CONSULTA SELECCIONADO EN DESPLEGABLE.
     queryGraph = ""; // GLOBAL -> NUNCA CAMBIA
     var sparqlQuery="select distinct ?Concept where {[] a ?Concept"+
-     " FILTER regex(?Concept , \"http\")} "
+     " FILTER isURI(?Concept )} "
 
    //CALLBACK PARA ESPERAR POR LA CONSULTA.
 	var callbackQuery = function (data) {
@@ -23,6 +23,7 @@ function lanzarConsultaSPARQL(consultaSPARQL,puntoDeConsulta,callback) {
 	var queryGraph = "";
 	dataQuery = null;
     $.ajax({
+    	//default-graph-uri
      	data:{"default-graph-uri":queryGraph, query:consultaSPARQL, format:'json'},
         url: puntoDeConsulta,
         cache: false,
