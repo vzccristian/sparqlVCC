@@ -19,20 +19,25 @@ function getRecursos(){
 	lanzarConsultaSPARQL(sparqlQuery,endpointGeneral,callbackQuery);
 }
 
-function lanzarConsultaSPARQL(consultaSPARQL,puntoDeConsulta,callback) {
+function lanzarConsultaSPARQL(sparqlQuery,puntoDeConsulta,callback) {
 	var queryGraph = "";
 	dataQuery = null;
-    $.ajax({
-    	//default-graph-uri
-     	data:{"default-graph-uri":queryGraph, query:consultaSPARQL, format:'json'},
+	console.log(sparqlQuery);
+	    $.ajax({
+     	data:{ query:sparqlQuery,format:'application/sparql-results+json'},
         url: puntoDeConsulta,
         cache: false,
-        statusCode: {400: function(error){ alert("Error al lanzar la consulta. "+consultaSPARQL+" \n");}  },
+      	crossDomain: true,
+      	dataType: 'jsonp',
+       	type: 'GET',
+        statusCode: {400: function(error){ alert("Error al lanzar la consulta. "+sparqlQuery+" \n");}  },
         success : function(data) {
 			dataQuery=data.results.bindings;
 			callback(dataQuery);
+			
 		}
 	});
+
 }
 
 function crearDesplegableRecursos(datos,divInsertar,columName) {
