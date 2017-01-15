@@ -1,4 +1,7 @@
 function getRecursos(){
+	document.getElementById("divPropiedades").innerHTML="";
+	document.getElementById("divTabla").innerHTML="";
+	document.getElementById("textAreaConsulta").value="";
 	console.log("Tomando recursos...");
 	document.getElementById("divRecursos").innerHTML="";
 	//OBTENCION PUNTO DE CONSULTA
@@ -18,7 +21,10 @@ function getRecursos(){
 	}
 	lanzarConsultaSPARQL(sparqlQuery,endpointGeneral,callbackQuery);
 }
+function setHeader(xhr) {
 
+  xhr.setRequestHeader('Authorization', token);
+}
 function lanzarConsultaSPARQL(sparqlQuery,puntoDeConsulta,callback) {
 	var queryGraph = "";
 	dataQuery = null;
@@ -30,12 +36,14 @@ function lanzarConsultaSPARQL(sparqlQuery,puntoDeConsulta,callback) {
       	crossDomain: true,
       	dataType: 'jsonp',
        	type: 'GET',
+       	async:false,
         statusCode: {400: function(error){ alert("Error al lanzar la consulta. "+sparqlQuery+" \n");}  },
         success : function(data) {
 			dataQuery=data.results.bindings;
 			callback(dataQuery);
 			
 		}
+
 	});
 
 }

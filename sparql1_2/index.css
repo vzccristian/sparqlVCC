@@ -1,0 +1,30 @@
+body {
+	height: 100%; 
+	width: 100%;
+}
+
+#titulo-inicio {
+	background-color: #0B2161;
+	border-radius: 10px; 
+}
+
+#titulo-contenido {
+	text-align: center;
+	color: #FFFFFF;
+}
+
+#form-completo {
+	border-radius: 10px; 
+	width: 75%;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	padding-top: 1px;
+	text-align: left;
+	background-color: #CEE3F6;
+
+}
+
+#tablaSPARQL {
+	background-color: #FFFFFF;
+}

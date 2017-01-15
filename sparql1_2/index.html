@@ -2,42 +2,40 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Consultas mediante SPARQL 1.3</title>
+    <script   src="https://code.jquery.com/jquery-3.0.0.min.js"  ></script>
+    <script type="text/javascript" src="sparql4.js" ></script>
 
-<script   src="https://code.jquery.com/jquery-3.0.0.min.js"  ></script>
-<script type="text/javascript" src="sparql4.js" ></script>
-    <title>Miniaplicación consulta mediante SPARQL 1.2</title>
+    
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
-
-    <style type="text/css">
-        html, body { height: 100%; margin: 20; padding: 20; }
-    </style>
+    <link rel="stylesheet" type="text/css" href="index.css" /> 
 
 </head>
 <body>
+  <div id="form-completo">
+    <div id="titulo-inicio">
+        <h1 id="titulo-contenido" >Consultas mediante SPARQL 1.3</h1>
+    </div>
+  
+    <form id="buscarOpenData" name="buscarDatosOpenData" method="post">
+    	<select id="lista" size="1">
+    		<option value="http://opendata.caceres.es/sparql/">OpenData Cáceres</option>
+            <option value="http://www.zaragoza.es/datosabiertos/sparql">OpenData Zaragoza</option>
+    		<option value="http://opendata.unex.es/sparql/">OpenData Universidad de Extremadura</option>
+    	</select>
+    	<input type="button" value="Seleccionar Punto de Consulta" onclick="getRecursos()">
+    </form>
 
-<h1>Miniaplicación consulta mediante SPARQL 1.2</h1>
-
-
-<form id="buscarOpenData" name="buscarDatosOpenData" method="post">
-	<select id="lista" size="1">
-		<option value="http://opendata.caceres.es/sparql/">OpenData Cáceres</option>
-        <option value="http://www.zaragoza.es/datosabiertos/sparql">OpenData Zaragoza</option>
-		<option value="http://opendata.unex.es/sparql/">OpenData Universidad de Extremadura</option>
-	</select>
-	<input type="button" value="Seleccionar Punto de Consulta" onclick="getRecursos()">
-</form>
-
-<div id="divRecursos"> </div> 
-<div id="divPropiedades"></div>
-
-<div id="divTextArea">
-<br>
-  <textarea name="textAreaConsulta" id="textAreaConsulta" cols="75" rows="15"></textarea>
- <br>
+    <div id="divRecursos"> </div> 
+    <div id="divPropiedades"></div>
+    <div id="divTextArea">
+    <br>
+      <textarea name="textAreaConsulta" id="textAreaConsulta" cols="75" rows="15"></textarea>
+     <br>
+    </div>
+    <br>
+    <div id=divTabla><br></div>
 </div>
-<br>
-<div id=divTabla><br></div>
-
 </body>
 </html>
