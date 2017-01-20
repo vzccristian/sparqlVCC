@@ -31,6 +31,27 @@ function getRecursos(){
 function lanzarConsultaSPARQL(sparqlQuery,puntoDeConsulta,callback) {
 	var queryGraph = "";
 	dataQuery = null;
+	    $.ajax({
+     	data:{ query:sparqlQuery},
+        url: "http://localhost:3000",
+        cache: false,
+      	crossDomain: true,
+      	dataType: 'json',
+       	type: 'GET',
+        statusCode: {400: function(error){ alert("Error al lanzar la consulta. "+sparqlQuery+" \n");}  },
+        success : 
+        function(data) {
+			dataQuery=data.results.bindings;
+			// callback(dataQuery);
+		}
+
+	});
+
+}
+
+function lanzarConsultaSPARQL2(sparqlQuery,puntoDeConsulta,callback) {
+	var queryGraph = "";
+	dataQuery = null;
 	console.log("lanzarConsultaSPARQL");
 	var test="hola";
 	console.log(sparqlQuery);

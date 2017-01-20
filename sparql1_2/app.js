@@ -18,6 +18,7 @@ var router = express.Router();
 
 router.route('/:dataset').all( function(request, response, next) {
         opendata.getDataCaceres(request.params.dataset, function(data) {
+            console.log("app.js linea 21");
             return response.json(data);
         });
     });
@@ -27,3 +28,4 @@ app.use(router);
 app.listen(3000, function() {
     console.log("Node server running on http://<ip_address>:3000");
 });
+
