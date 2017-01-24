@@ -199,6 +199,8 @@ function createButton(context, func, valor, id){
     button.value = valor;
     button.onclick = func;
     button.id="button"+id; 
+    if (posicion.indexOf("derecho") != -1) { button.id="button"+id+" Derecho"; 	}
+				else { button.id="button"+id+" Izquierdo"; }
     context.appendChild(button);
 }
 

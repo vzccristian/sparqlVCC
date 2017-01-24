@@ -12,6 +12,7 @@ module.exports = {
      * @param {string} whichDataset - One of { monument, museum, restaurant, parking, theater, cinema }
      */
     getDataCaceres: function(whichDataset, allDoneCallback) {
+        console.log(whichDataset);
         async.waterfall(
             [
                 // 1. Get all the information of the selected dataset with a query to the SPARQL endpoint of opendata Cáceres
@@ -21,6 +22,7 @@ module.exports = {
                     try {
                         data = myCache.get(whichDataset, true);
                         // Finish, since image urls are also included in the cache
+                         console.log("opendata.js linea 24");
                         allDoneCallback(data);
                         console.log("opendata.js linea 25");
                     } catch (err) {
@@ -53,7 +55,7 @@ module.exports = {
 
 function getDataFromEndpoint(whichDataset, dataObtainedCallback) {
     console.log("opendata.js linea 53");
-    var endpoint = 'http://opendata.caceres.es/sparql/';
+    var endpoint = 'http://www.zaragoza.es/datosabiertos/sparql';
     var graph = '';
     var SPARQLquery = '';
     switch (whichDataset) {
@@ -66,7 +68,7 @@ function getDataFromEndpoint(whichDataset, dataObtainedCallback) {
     if (SPARQLquery) {
     console.log("opendata.js linea 65");
         request({
-                url: 'http://opendata.caceres.es/sparql/',
+                url: 'http://www.zaragoza.es/datosabiertos/sparql',
                 qs: { // Query string data
                     query: SPARQLquery,
                     format: 'application/sparql-results+json'

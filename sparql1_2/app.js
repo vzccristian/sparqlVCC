@@ -16,11 +16,12 @@ app.use(function(req, res, next) {
 
 var router = express.Router();
 
-router.route('/:dataset').all( function(request, response, next) {
-        opendata.getDataCaceres(request.params.dataset, function(data) {
+router.route('/:path').all( function(request, response, next) {
+        opendata.getDataCaceres(request.param, function(data) {
             console.log("app.js linea 21");
             return response.json(data);
         });
+
     });
 
 app.use(router);

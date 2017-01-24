@@ -1,86 +1,81 @@
 
-
-function getRecursos(){
-	document.getElementById("divPropiedades").innerHTML="";
-	document.getElementById("divTabla").innerHTML="";
-	document.getElementById("textAreaConsulta").value="";
+function getRecursos(posicion){
 	console.log("Tomando recursos...");
-	document.getElementById("divRecursos").innerHTML="";
-	//OBTENCION PUNTO DE CONSULTA
-    var listaEndPoint =  document.getElementById("lista"); //Seleccionar lista para consultas open data
+	document.getElementById("divPropiedades"+posicion).innerHTML="";
+	document.getElementById("divTabla"+posicion).innerHTML="";
+	document.getElementById("textAreaConsulta"+posicion).value="";
+	document.getElementById("divRecursos"+posicion).innerHTML="";
+	var listaEndPoint =  document.getElementById("lista"+posicion); //Seleccionar lista para consultas open data
     endpointGeneral = listaEndPoint.options[listaEndPoint.selectedIndex].value; //GLOBAL -> SELECCIONAR PUNTO DE CONSULTA SELECCIONADO EN DESPLEGABLE.
     queryGraph = ""; // GLOBAL -> NUNCA CAMBIA
-    var sparqlQuery="select distinct ?Concept where {[] a ?Concept"+
-     " FILTER isURI(?Concept )} ";
+    var sparqlQuery="select distinct ?Concept where {[] a ?Concept FILTER isURI(?Concept )} ";
 
    //CALLBACK PARA ESPERAR POR LA CONSULTA.
 	var callbackQuery = function (data) {
 		if ( data!== null) { //Consulta CORRECTA
 			datosRecursos=data; //GLOBAL
 			var columName="Concept";
-			crearDesplegableRecursos(data,"#divRecursos",columName);
+			crearDesplegableRecursos(data,"divRecursos",columName,posicion);
 		}
 	};
-
 	lanzarConsultaSPARQL(sparqlQuery,endpointGeneral,callbackQuery);
 }
-
-
 
 
 function lanzarConsultaSPARQL(sparqlQuery,puntoDeConsulta,callback) {
 	var queryGraph = "";
 	dataQuery = null;
 	    $.ajax({
-     	data:{ query:sparqlQuery},
-        url: "http://localhost:3000",
-        cache: false,
-      	crossDomain: true,
-      	dataType: 'json',
-       	type: 'GET',
-        statusCode: {400: function(error){ alert("Error al lanzar la consulta. "+sparqlQuery+" \n");}  },
-        success : 
-        function(data) {
-			dataQuery=data.results.bindings;
-			// callback(dataQuery);
-		}
-
-	});
-
-}
-
-function lanzarConsultaSPARQL2(sparqlQuery,puntoDeConsulta,callback) {
-	var queryGraph = "";
-	dataQuery = null;
-	console.log("lanzarConsultaSPARQL");
-	var test="hola";
-	console.log(sparqlQuery);
-	    $.ajax({
      	data:{ query:sparqlQuery,format:'application/sparql-results+json'},
         url: puntoDeConsulta,
         cache: false,
-      	crossDomain: true,
-      	dataType: 'jsonp',
-      	isLocal: false,
-       	type: 'GET',
-       	async:false,
-        statusCode: {400: function(error){ alert("Error al lanzar la consulta. "+sparqlQuery+" \n");}  },
+      	// crossDomain: true,
+      	dataType: 'json',
+       /**/	type: 'GET',
+        statusCode: {400: function(error){ alert("Error al lanzar la consulta. \n"+sparqlQuery+" \n");}  },
         success : 
         function(data) {
 			dataQuery=data.results.bindings;
 			callback(dataQuery);
-			
 		}
 
 	});
 
 }
 
-function crearDesplegableRecursos(datos,divInsertar,columName) {
-		var div = document.querySelector(divInsertar),
+// function lanzarConsultaSPARQL2(sparqlQuery,puntoDeConsulta,callback) {
+// 	var queryGraph = "";
+// 	dataQuery = null;
+// 	console.log("lanzarConsultaSPARQL");
+// 	var test="hola";
+// 	console.log(sparqlQuery);
+// 	    $.ajax({
+//      	data:{ query:sparqlQuery,format:'application/sparql-results+json'},
+//         url: puntoDeConsulta,
+//         cache: false,
+//       	crossDomain: true,
+//       	dataType: 'jsonp',
+//       	isLocal: false,
+//        	type: 'GET',
+//        	async:false,
+//         statusCode: {400: function(error){ alert("Error al lanzar la consulta. "+sparqlQuery+" \n");}  },
+//         success : 
+//         function(data) {
+// 			dataQuery=data.results.bindings;
+// 			callback(dataQuery);
+			
+// 		}
+
+// 	});
+
+// }
+
+function crearDesplegableRecursos(datos,divInsertar,columName,posicion) {
+		var div = document.getElementById(divInsertar+posicion),
 		frag = document.createDocumentFragment(),
 		select = document.createElement("select");
-		select.id="desplegableRecursos";
+		console.log(divInsertar+posicion);
+		select.id="desplegableRecursos"+posicion;
 		var valor = "";
 		for (var i = 0; i < datos.length; i++) {
 			valor = datos[i][columName].value;
@@ -90,18 +85,20 @@ function crearDesplegableRecursos(datos,divInsertar,columName) {
 		frag.appendChild(select);
 		div.appendChild(frag);
 		espacio = document.createTextNode("      ");
- 		divRecursos.appendChild(espacio);
-		createButton(divRecursos,null,"Seleccionar recurso","selectResources");
-		document.getElementById("buttonselectResources").onclick = function() {
-			getPropertiesOfResources();};
+ 		div.appendChild(espacio);
+
+		createButton(div,null,"Seleccionar recurso","selectResources",posicion);
+		document.getElementById("buttonselectResources"+posicion).onclick = function() {
+		getPropertiesOfResources(posicion); };
+
 }
 
-function getPropertiesOfResources() {
-	console.log("getPropertiesOfResources()");
-	document.getElementById("divPropiedades").innerHTML="";
-	document.getElementById("divTabla").innerHTML="";
-	document.getElementById("textAreaConsulta").value="";
-	var resource=document.getElementById("desplegableRecursos");
+function getPropertiesOfResources(posicion) {
+	console.log("getPropertiesOfResources() "+posicion);
+	document.getElementById("divPropiedades"+posicion).innerHTML="";
+	document.getElementById("divTabla"+posicion).innerHTML="";
+	document.getElementById("textAreaConsulta"+posicion).value="";
+	var	resource=document.getElementById("desplegableRecursos"+posicion);
 
 	if(resource.selectedIndex<0)
     		alert('Error');
@@ -115,38 +112,38 @@ function getPropertiesOfResources() {
 
     var callbackQueryProperties = function (data) {
 		if (data!==null) { //Consulta CORRECTA
-			generarForm(data,"property","divPropiedades");
+			generarForm(data,"property","divPropiedades",posicion);
 		}
 	};
     lanzarConsultaSPARQL(sparqlQuery,endpointGeneral,callbackQueryProperties);    
 	}
 }
 
-function generarForm(datos,columName,div) {
-	console.log("generarForm()");
+function generarForm(datos,columName,div,posicion) {
+	console.log("generarForm en Posición: "+ posicion);
 	datosOntologia=[];
 	var valorLimpio=null;
 	for ( var i in datos) {
 		var valor = datos[i][columName].value; //Contiene todo el string.
 		if ( valor.search("#")!=-1) { 
 			valorLimpio = valor.split("#");
-			generarForm2(valor,"#",valorLimpio.length-1,div);
+			generarForm2(valor,"#",valorLimpio.length-1,div,posicion);
 		} else {
 			valorLimpio = valor.split("/");
-			generarForm2(valor,"/",valorLimpio.length-1,div);
+			generarForm2(valor,"/",valorLimpio.length-1,div,posicion);
 		}
 		//Creo array con ontologia y atributo.
 		datosOntologia.push({ ontologia: valor, atributo: valorLimpio[valorLimpio.length-1] });
 	}	
-	
-	createButton(container,construirConsulta,"Consultar en punto de consulta","buttonConstruirConsulta");
+	// function(){ return changeViewMode(myvar); }
+	createButton(container,function(){ return construirConsulta(posicion); },"Consultar en punto de consulta","buttonConstruirConsulta",posicion);
 }
 
-function generarForm2(valor,separador,posicion,div) {
+function generarForm2(valor,separador,posicion,div,posicionBody) {
 	var valorLimpio = valor.split(separador);
 	var checkbox = document.createElement('input');
 	checkbox.type = "checkbox";
-	checkbox.name = "checkboxForm";
+	checkbox.name = "checkboxForm"+posicionBody;
 	checkbox.value = valorLimpio[posicion];
 	checkbox.id = valorLimpio[posicion];
 	//Etiqueta
@@ -156,7 +153,7 @@ function generarForm2(valor,separador,posicion,div) {
 	label.appendChild(document.createTextNode(valorLimpio[posicion]));
 	pElement.appendChild(checkbox);
 	pElement.appendChild(label);
-	container=document.getElementById(div);
+	container=document.getElementById(div+posicionBody);
 	container.appendChild(pElement);
 }
 
@@ -177,12 +174,17 @@ function getCheckedBoxes(chkboxName) {
 }
 
 
-
-function construirConsulta() {
+var tester;
+function construirConsulta(posicion) {
 	console.log("Construyendo consulta");
-	container=document.getElementById("divPropiedades");
-	checkedBoxes = getCheckedBoxes("checkboxForm");
+	var	container=document.getElementById("divPropiedades"+posicion);
+	var	resource=document.getElementById("desplegableRecursos"+posicion);
+	var	textArea=document.getElementById("textAreaConsulta"+posicion);
+
+	var checkedBoxes = getCheckedBoxes("checkboxForm"+posicion);
 	var checkedValue = null; 
+	if (checkedBoxes!==null) {
+	tester=checkedBoxes;
 	consulta="PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n "+
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \n "+
 				"PREFIX owl: <http://www.w3.org/2002/07/owl#> \n "+
@@ -196,7 +198,6 @@ function construirConsulta() {
       }
 		consulta+="where { \n";
 
-	var resource=document.getElementById("desplegableRecursos");
 	var valorSeleccionado=datosRecursos[resource.selectedIndex]["Concept"].value;
 	consulta+="?x a <"+valorSeleccionado+"> . \n";
 	//ATRIBUTOS
@@ -216,42 +217,52 @@ function construirConsulta() {
 	}
 	consulta+=" }";
 
-	var textArea=document.getElementById("textAreaConsulta");
 	textArea.value=consulta;
-	enviarConsulta(consulta,checkedBoxes);
+	consulta+=" LIMIT 500";
+	enviarConsulta(consulta,checkedBoxes,posicion);
+	} else {
+		console.log("**ERROR** No hay atributos seleccionados.");
+	}
 }
 
-function enviarConsulta(consulta,encabezados) {
+function enviarConsulta(consulta,encabezados,posicionBody) {
 	console.log("Enviando consulta...");
 	var callbackSendQuery = function (data) {
 		if (data!==null) { //Consulta CORRECTA
-			generarTabla(data,encabezados);
+			generarTabla(data,encabezados,posicionBody);
 		}
 	};
     lanzarConsultaSPARQL(consulta,endpointGeneral,callbackSendQuery);  
 }
 
-function createButton(context, func, valor, id){
+function createButton(context, func, valor, id,posicion){
     var button = document.createElement("input");
     button.type = "button";
-    button.value = valor;
+    button.value = valor+" "+posicion;
     button.onclick = func;
-    button.id="button"+id; 
+    button.id="button"+id+posicion;
     context.appendChild(button);
 }
 
 
-function generarTabla(datos,encabezados) {
+function generarTabla(datos,encabezados,posicionBody) {
 	console.log("Generando tabla...");
 	datosTabla=datos; //GLOBALES TABLA Y ENCABEZADOS.
 	encabezadosTabla=encabezados;
-	var borrar= document.getElementById("tablaSPARQL");
-	if (borrar!==null)
-		document.getElementById("divTabla").innerHTML="";
 
-	var body = document.getElementById("divTabla");
+	var divActual="divTabla"+posicionBody; 
+	var tablaActual="tablaSPARQL"+posicionBody;
+
+	var borrar= document.getElementById(tablaActual);
+	if (borrar!==null)
+		document.getElementById(tablaActual).innerHTML="";
+	
+
+	var body = document.getElementById(divActual);
+	console.log(divActual);
 	var tabla   = document.createElement("table");
-	tabla.id=("tablaSPARQL");
+	tabla.id=(tablaActual);
+	tabla.className="tablaSPARQL";
 	var tblBody = document.createElement("tbody");
 	 
 	//CREACION DE CABECERAS DE LA TABLA

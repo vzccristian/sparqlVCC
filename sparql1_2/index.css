@@ -1,6 +1,7 @@
 body {
 	height: 100%; 
-	width: 100%;
+	width: 99%;
+	background-color: #CEE3F6;
 }
 
 #titulo-inicio {
@@ -15,7 +16,6 @@ body {
 
 #form-completo {
 	border-radius: 10px; 
-	width: 75%;
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 10px;
@@ -25,6 +25,19 @@ body {
 
 }
 
-#tablaSPARQL {
+.tablaSPARQL {
 	background-color: #FFFFFF;
+}
+#form-izquierdo {
+	width: 44%;
+	float: left;
+	text-align: justify;
+	padding: 10px;
+}
+
+#form-derecho {
+	width: 44%;
+	float:right;
+	text-align: justify;
+	padding: 10px;
 }
