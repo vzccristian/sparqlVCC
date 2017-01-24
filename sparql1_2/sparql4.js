@@ -259,7 +259,7 @@ function generarTabla(datos,encabezados,posicionBody) {
 	
 
 	var body = document.getElementById(divActual);
-	console.log(divActual);
+	console.log(divActual+" "+tablaActual);
 	var tabla   = document.createElement("table");
 	tabla.id=(tablaActual);
 	tabla.className="tablaSPARQL";
