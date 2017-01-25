@@ -4,17 +4,17 @@ body {
 	background-color: #CEE3F6;
 }
 
-#titulo-inicio {
+#title-ini{
 	background-color: #0B2161;
 	border-radius: 10px; 
 }
 
-#titulo-contenido {
+#title-content {
 	text-align: center;
 	color: #FFFFFF;
 }
 
-#form-completo {
+#form-complete {
 	border-radius: 10px; 
 	padding-left: 10px;
 	padding-right: 10px;
@@ -25,17 +25,17 @@ body {
 
 }
 
-.tablaSPARQL {
+.SPARQLtable {
 	background-color: #FFFFFF;
 }
-#form-izquierdo {
+#left-form {
 	width: 44%;
 	float: left;
 	text-align: justify;
 	padding: 10px;
 }
 
-#form-derecho {
+#right-form {
 	width: 44%;
 	float:right;
 	text-align: justify;
