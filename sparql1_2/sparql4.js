@@ -89,14 +89,14 @@ function createResourceList(resourceData,divToInsert,columName,endpointGeneral,p
 		getPropertiesOfResources(resourceData, position,endpointGeneral); };
 
 }
-
+var test;
 function getPropertiesOfResources(resourceData, position, endpointGeneral) {
 	console.log("getPropertiesOfResources() "+position);
 	document.getElementById("propertiesDiv"+position).innerHTML="";
 	document.getElementById("tableDiv"+position).innerHTML="";
 	document.getElementById("textAreaQuery"+position).value="";
 	var	resource=document.getElementById("resourceList"+position);
-
+	test=resource;
 	if(resource.selectedIndex<0)
     		alert('Error');
 	else {
@@ -235,6 +235,7 @@ function createButton(context, func, valor, id,posicion){
     button.value = valor+" "+posicion;
     button.onclick = func;
     button.id="button"+id+posicion;
+    button.className="typeButton";
     context.appendChild(button);
 }
 
@@ -253,8 +254,8 @@ function generateTable(propData,encabezados,posicionBody) {
 	var table   = document.createElement("table");
 	table.id=(currentTable);
 	table.className="SPARQLtable";
-	var tblBody = document.createElement("tbody");
-	 
+	// var tblBody = document.createElement("tbody");
+	var tblHead = document.createElement("thead");
 	//CREACION DE CABECERAS DE LA TABLA
 	var row = document.createElement("tr");
 	 for  (var j in encabezados) {
