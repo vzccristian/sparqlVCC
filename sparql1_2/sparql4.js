@@ -89,11 +89,13 @@ function createResourceList(resourceData,divToInsert,columName,endpointGeneral,p
 		getPropertiesOfResources(resourceData, position,endpointGeneral); };
 
 }
-var test;
+
 function getPropertiesOfResources(resourceData, position, endpointGeneral) {
 	console.log("getPropertiesOfResources() "+position);
 	document.getElementById("propertiesDiv"+position).innerHTML="";
-	document.getElementById("tableDiv"+position).innerHTML="";
+	var divTabla=document.getElementById("tableDiv"+position);
+	divTabla.className="";
+	divTabla.innerHTML="";
 	document.getElementById("textAreaQuery"+position).value="";
 	var	resource=document.getElementById("resourceList"+position);
 	test=resource;
@@ -249,14 +251,15 @@ function generateTable(propData,encabezados,posicionBody) {
 	if (del!==null)
 		document.getElementById(currentTable).innerHTML="";
 	
+	var divObjt=document.getElementById(currentDiv);
+	divObjt.className="SPARQLtable";
 	var body = document.getElementById(currentDiv);
 	console.log(currentDiv+" "+currentTable);
 	var table   = document.createElement("table");
 	table.id=(currentTable);
-	table.className="SPARQLtable";
-	// var tblBody = document.createElement("tbody");
-	var tblHead = document.createElement("thead");
+	var tblBody = document.createElement("tbody");
 	//CREACION DE CABECERAS DE LA TABLA
+	var tblHead = document.createElement("thead");
 	var row = document.createElement("tr");
 	 for  (var j in encabezados) {
 			var cell = document.createElement("th");
@@ -264,9 +267,10 @@ function generateTable(propData,encabezados,posicionBody) {
 			var cellText = document.createTextNode(atrib);
 			cell.appendChild(cellText);
 			row.appendChild(cell);
-			tblBody.appendChild(row);  
+			tblHead.appendChild(row);  
+			// tblBody.appendChild(row);  
 	}
-
+	table.appendChild(tblHead);
 	//CREACION DE TABLA
 	for ( var i in propData) {
 		row = document.createElement("tr");
