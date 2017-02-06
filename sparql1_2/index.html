@@ -2,19 +2,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Consultas mediante SPARQL 1.3.4</title>
-    <script   src="https://code.jquery.com/jquery-3.0.0.min.js"  ></script>
-    <script type="text/javascript" src="sparql4.js" ></script>
+    <title>SPARQL 1.3.6</title>
+    <script type="text/javascript" src="js/jquery-3.0.0.min.js"  ></script>
+    <script type="text/javascript" src="js/sparql4.js" ></script>
 
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="index.css" /> 
+    <link rel="stylesheet" type="text/css" href="css/index.css" /> 
 
 </head>
 <body>
   <div id="form-complete">
       <div id="title-ini">
-        <h1 id="title-content" >Consultas mediante SPARQL 1.3.4</h1>
+        <h1 id="title-content" >Consultas mediante SPARQL 1.3.6</h1>
     </div>
   
     <div id="left-form">
@@ -23,7 +23,9 @@
         	<select id="lista1" size="1">
         		<option value="http://opendata.caceres.es/sparql/">OpenData Cáceres</option>
                 <option value="http://www.zaragoza.es/datosabiertos/sparql">OpenData Zaragoza</option>
+                <option value="http://datos.santander.es/sparql/select">OpenData Santander</option>
         		<option value="http://opendata.unex.es/sparql/">OpenData Universidad de Extremadura</option>
+
         	</select>
         	<input type="button" class="typeButton" value="Seleccionar Punto de Consulta 1" onclick="getResources(1)">
         </form>
@@ -44,6 +46,7 @@
             <select id="lista2" size="1">
                 <option value="http://opendata.caceres.es/sparql/">OpenData Cáceres</option>
                 <option value="http://www.zaragoza.es/datosabiertos/sparql">OpenData Zaragoza</option>
+                <option value="http://datos.santander.es/sparql/select">OpenData Santander</option>
                 <option value="http://opendata.unex.es/sparql/">OpenData Universidad de Extremadura</option>
             </select>
             <input type="button" class="typeButton" value="Seleccionar Punto de Consulta 2" onclick="getResources(2)">
